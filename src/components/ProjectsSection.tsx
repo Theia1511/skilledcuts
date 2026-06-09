@@ -1,192 +1,141 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowUpRight, ExternalLink } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { ArrowUpRight } from "lucide-react";
 
 const projects = [
   {
+    no: "01",
     title: "NexaCommerce",
     category: "E-Commerce",
-    description: "Full e-commerce platform with AI-powered recommendations and seamless checkout.",
-    result: "+340% conversion rate",
+    result: "+340% conversion",
     tags: ["Next.js", "Stripe", "AI"],
-    gradient: "from-violet-900/50 to-purple-900/30",
-    accent: "#8B5CF6",
-    mockup: "E-Commerce Dashboard",
+    lines: [80, 55, 70, 40, 90, 60],
   },
   {
+    no: "02",
     title: "Fintract",
-    category: "FinTech",
-    description: "Financial analytics SaaS with real-time data visualization and automated reporting.",
-    result: "$2.1M raised post-launch",
+    category: "FinTech SaaS",
+    result: "$2.1M raised",
     tags: ["React", "D3.js", "Node"],
-    gradient: "from-cyan-900/50 to-blue-900/30",
-    accent: "#06B6D4",
-    mockup: "Finance Analytics",
+    lines: [65, 90, 45, 78, 55, 85],
   },
   {
+    no: "03",
     title: "MediFlow",
     category: "Healthcare",
-    description: "Patient management system with AI scheduling and telemedicine integrations.",
-    result: "60% admin time saved",
-    tags: ["TypeScript", "OpenAI", "Prisma"],
-    gradient: "from-emerald-900/50 to-teal-900/30",
-    accent: "#10B981",
-    mockup: "Healthcare Platform",
+    result: "60% time saved",
+    tags: ["TypeScript", "OpenAI"],
+    lines: [70, 50, 88, 60, 75, 45],
   },
   {
+    no: "04",
     title: "PropVault",
     category: "Real Estate",
-    description: "Premium property listing platform with 3D tours and smart search functionality.",
-    result: "+180% qualified leads",
-    tags: ["Three.js", "Next.js", "Maps"],
-    gradient: "from-amber-900/50 to-orange-900/30",
-    accent: "#F59E0B",
-    mockup: "Real Estate App",
+    result: "+180% leads",
+    tags: ["Three.js", "Maps API"],
+    lines: [55, 82, 65, 92, 48, 70],
   },
 ];
 
-export default function ProjectsSection() {
+/* Minimal abstract bar chart as project visual */
+function BarMockup({ lines }: { lines: number[] }) {
   return (
-    <section id="work" className="relative py-24 overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-900/10 rounded-full blur-[150px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Header */}
+    <div className="flex items-end gap-1.5 h-20 mt-auto">
+      {lines.map((h, i) => (
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          key={i}
+          initial={{ scaleY: 0 }}
+          whileInView={{ scaleY: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+          style={{ height: `${h}%` }}
+          className="flex-1 rounded-sm bg-[rgba(235,206,181,0.15)] origin-bottom"
+        />
+      ))}
+    </div>
+  );
+}
+
+function ProjectCard({ p, i }: { p: typeof projects[0]; i: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: i * 0.1 }}
+      whileHover={{ y: -6 }}
+      className="group relative p-7 rounded-2xl border border-[rgba(235,206,181,0.07)] bg-[#131109] hover:border-[rgba(235,206,181,0.14)] transition-all duration-300 flex flex-col min-h-[280px] cursor-pointer"
+    >
+      {/* Top row */}
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <span className="text-[10px] text-[rgba(235,206,181,0.25)] tracking-[0.2em] uppercase font-mono">
+            {p.no} — {p.category}
+          </span>
+          <h3 className="text-[#ebceb5] font-bold text-xl mt-1">{p.title}</h3>
+        </div>
+        <div className="w-8 h-8 rounded-full border border-[rgba(235,206,181,0.1)] flex items-center justify-center text-[rgba(235,206,181,0.3)] group-hover:text-[#ebceb5] group-hover:border-[rgba(235,206,181,0.3)] transition-all duration-200">
+          <ArrowUpRight size={14} />
+        </div>
+      </div>
+
+      {/* Chart */}
+      <BarMockup lines={p.lines} />
+
+      {/* Footer */}
+      <div className="flex items-center justify-between mt-6 pt-5 border-t border-[rgba(235,206,181,0.06)]">
+        <div className="flex gap-2">
+          {p.tags.map(t => (
+            <span key={t} className="text-[10px] px-2 py-1 rounded-md bg-[rgba(235,206,181,0.05)] border border-[rgba(235,206,181,0.07)] text-[rgba(235,206,181,0.35)]">
+              {t}
+            </span>
+          ))}
+        </div>
+        <span className="text-[11px] text-[rgba(235,206,181,0.55)] font-medium">{p.result}</span>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function ProjectsSection() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
+
+  return (
+    <section id="work" ref={ref} className="relative py-28 border-t border-[rgba(235,206,181,0.06)] overflow-hidden">
+      {/* Parallax background text */}
+      <motion.div
+        style={{ y: bgY }}
+        className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-[20vw] font-black text-[rgba(235,206,181,0.02)] leading-none select-none pointer-events-none"
+      >
+        WORK
+      </motion.div>
+
+      <div className="relative max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6"
         >
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs tracking-widest uppercase mb-4">
-              Our Work
-            </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight">
-              Featured
-              <span className="gradient-text"> Projects</span>
+            <p className="text-[10px] text-[rgba(235,206,181,0.35)] tracking-[0.22em] uppercase mb-4">Our Work</p>
+            <h2 className="text-[clamp(2.4rem,5vw,4rem)] font-black text-[#ebceb5] leading-[0.95] tracking-tight">
+              Featured<br />Projects
             </h2>
           </div>
-          <p className="text-white/40 max-w-sm text-base">
-            Real results for real businesses. Each project is a case study in strategy and execution.
+          <p className="text-[rgba(235,206,181,0.35)] max-w-xs text-sm leading-relaxed">
+            Real results for real businesses. Each project is a story of strategy meeting execution.
           </p>
         </motion.div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, i) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              whileHover={{ y: -4 }}
-              className="group relative rounded-2xl overflow-hidden border border-white/5 hover:border-white/10 transition-all duration-300 cursor-pointer"
-            >
-              {/* Project Mockup */}
-              <div className={`relative h-56 bg-gradient-to-br ${project.gradient} flex items-center justify-center overflow-hidden`}>
-                {/* Abstract UI mockup */}
-                <div className="w-full h-full p-6 flex flex-col gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-400/60" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-400/60" />
-                    <div className="w-3 h-3 rounded-full bg-green-400/60" />
-                    <div className="flex-1 h-3 rounded-full bg-white/5 ml-2" />
-                  </div>
-                  <div className="flex gap-3 flex-1">
-                    <div className="w-1/3 rounded-lg bg-white/5 border border-white/5" />
-                    <div className="flex-1 flex flex-col gap-2">
-                      <div className="h-3 rounded-full bg-white/8 w-3/4" />
-                      <div className="h-3 rounded-full bg-white/5 w-1/2" />
-                      <div className="flex-1 rounded-lg mt-1" style={{ background: `${project.accent}15`, border: `1px solid ${project.accent}20` }} />
-                      <div className="flex gap-2">
-                        <div className="h-7 flex-1 rounded-md" style={{ background: `${project.accent}30` }} />
-                        <div className="h-7 flex-1 rounded-md bg-white/5" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    whileHover={{ scale: 1, opacity: 1 }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white text-black text-sm font-semibold"
-                  >
-                    View Project <ExternalLink size={14} />
-                  </motion.div>
-                </div>
-
-                {/* Category badge */}
-                <div
-                  className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium border"
-                  style={{
-                    background: `${project.accent}20`,
-                    color: project.accent,
-                    borderColor: `${project.accent}30`,
-                  }}
-                >
-                  {project.category}
-                </div>
-              </div>
-
-              {/* Project Info */}
-              <div className="p-6 bg-[#111111]">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-xl font-bold text-white">{project.title}</h3>
-                  <ArrowUpRight
-                    size={18}
-                    className="text-white/20 group-hover:text-white/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  />
-                </div>
-                <p className="text-white/50 text-sm mb-4 leading-relaxed">
-                  {project.description}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-0.5 text-xs rounded-md bg-white/5 text-white/40 border border-white/8"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <span
-                    className="text-xs font-semibold px-3 py-1 rounded-full"
-                    style={{ color: project.accent, background: `${project.accent}15` }}
-                  >
-                    {project.result}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {projects.map((p, i) => <ProjectCard key={p.title} p={p} i={i} />)}
         </div>
-
-        {/* View all CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-center mt-10"
-        >
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="px-8 py-3 glass border border-white/10 hover:border-white/20 text-white font-medium rounded-full text-sm transition-all inline-flex items-center gap-2"
-          >
-            View All Projects <ArrowUpRight size={15} />
-          </motion.button>
-        </motion.div>
       </div>
     </section>
   );

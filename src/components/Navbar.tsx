@@ -2,129 +2,112 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import Link from "next/link";
+import { X, Menu } from "lucide-react";
 
-const navLinks = [
-  { label: "Services", href: "#services" },
-  { label: "Work", href: "#work" },
-  { label: "Process", href: "#process" },
-  { label: "About", href: "#why-us" },
-  { label: "FAQ", href: "#faq" },
+const links = [
+  { label: "Services",    href: "#services"  },
+  { label: "Work",        href: "#work"      },
+  { label: "Process",     href: "#process"   },
+  { label: "Testimonials",href: "#testimonials"},
+  { label: "FAQ",         href: "#faq"       },
 ];
+
+const scrollTo = (href: string) => {
+  document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+};
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen]         = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const fn = () => setScrolled(window.scrollY > 30);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
   }, []);
-
-  const handleNavClick = (href: string) => {
-    setMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
     <>
       <motion.nav
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-black/70 backdrop-blur-xl border-b border-white/5"
-            : "bg-transparent"
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0,  opacity: 1 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
+          scrolled ? "bg-[#0e0c0a]/90 backdrop-blur-md border-b border-[rgba(235,206,181,0.06)]" : ""
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative">
-              <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-cyan-400 rounded-lg flex items-center justify-center">
-                <span className="text-white font-black text-sm">SC</span>
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-cyan-400 rounded-lg blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
-            </div>
-            <span className="font-bold text-lg tracking-tight text-white">
-              Skilled<span className="text-violet-400">Cuts</span>
-            </span>
-          </Link>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="font-bold text-[#ebceb5] tracking-tight text-lg select-none"
+          >
+            Skilled<span className="opacity-50">Cuts</span>
+          </button>
 
-          {/* Desktop Nav */}
+          {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
+            {links.map(l => (
               <button
-                key={link.label}
-                onClick={() => handleNavClick(link.href)}
-                className="text-sm text-white/60 hover:text-white transition-colors duration-200 cursor-pointer"
+                key={l.label}
+                onClick={() => scrollTo(l.href)}
+                className="text-sm text-[rgba(235,206,181,0.45)] hover:text-[#ebceb5] transition-colors duration-200"
               >
-                {link.label}
+                {l.label}
               </button>
             ))}
           </div>
 
           {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
-            <button
-              onClick={() => handleNavClick("#contact")}
-              className="text-sm text-white/60 hover:text-white transition-colors"
-            >
-              Get Proposal
-            </button>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => handleNavClick("#contact")}
-              className="px-5 py-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium rounded-full transition-colors duration-200 glow-purple"
-            >
-              Book a Call
-            </motion.button>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden text-white/70 hover:text-white transition-colors"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => scrollTo("#contact")}
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full border border-[rgba(235,206,181,0.2)] text-[#ebceb5] text-sm hover:bg-[rgba(235,206,181,0.06)] transition-all"
           >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            Book a Call
+          </motion.button>
+
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setOpen(!open)}
+            className="md:hidden text-[#ebceb5] opacity-60 hover:opacity-100 transition-opacity"
+            aria-label="Menu"
+          >
+            {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile drawer */}
       <AnimatePresence>
-        {menuOpen && (
+        {open && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-40 bg-[#0e0c0a]/98 backdrop-blur-xl flex flex-col items-center justify-center gap-9 md:hidden"
           >
-            {navLinks.map((link, i) => (
+            {links.map((l, i) => (
               <motion.button
-                key={link.label}
-                initial={{ opacity: 0, y: 20 }}
+                key={l.label}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.07 }}
-                onClick={() => handleNavClick(link.href)}
-                className="text-2xl font-medium text-white/80 hover:text-white transition-colors"
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ delay: i * 0.06 }}
+                onClick={() => { scrollTo(l.href); setOpen(false); }}
+                className="text-2xl font-medium text-[#ebceb5] opacity-70 hover:opacity-100 transition-opacity"
               >
-                {link.label}
+                {l.label}
               </motion.button>
             ))}
             <motion.button
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: navLinks.length * 0.07 }}
-              onClick={() => handleNavClick("#contact")}
-              className="px-8 py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-full transition-colors mt-4"
+              transition={{ delay: links.length * 0.06 }}
+              onClick={() => { scrollTo("#contact"); setOpen(false); }}
+              className="mt-4 px-8 py-3 rounded-full border border-[rgba(235,206,181,0.25)] text-[#ebceb5] text-sm"
             >
               Book a Call
             </motion.button>

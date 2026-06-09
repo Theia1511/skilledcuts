@@ -1,110 +1,71 @@
 "use client";
 
-import { useInView, motion } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const stats = [
-  { value: 150, suffix: "+", label: "Projects Completed", description: "Across 20+ industries" },
-  { value: 98, suffix: "%", label: "Client Satisfaction", description: "Average rating 4.9/5" },
-  { value: 12, suffix: "M+", label: "Revenue Generated", description: "For our clients collectively" },
-  { value: 5, suffix: "+", label: "Years Experience", description: "Building digital products" },
+  { value: 150, suffix: "+",  label: "Projects Delivered"    },
+  { value: 98,  suffix: "%",  label: "Client Satisfaction"   },
+  { value: 12,  suffix: "M+", label: "Revenue Generated"     },
+  { value: 5,   suffix: "+",  label: "Years of Experience"   },
 ];
 
-function CountUp({ target, suffix, inView }: { target: number; suffix: string; inView: boolean }) {
-  const [count, setCount] = useState(0);
+const brands = ["Shopify","Notion","Webflow","Stripe","Vercel","Figma","Linear","Framer","Loom","Arc"];
 
+function Counter({ target, suffix, run }: { target: number; suffix: string; run: boolean }) {
+  const [n, setN] = useState(0);
   useEffect(() => {
-    if (!inView) return;
-    const duration = 2000;
-    const step = target / (duration / 16);
-    let current = 0;
-    const timer = setInterval(() => {
-      current += step;
-      if (current >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(current));
-      }
+    if (!run) return;
+    const dur = 1800, step = target / (dur / 16);
+    let cur = 0;
+    const t = setInterval(() => {
+      cur += step;
+      if (cur >= target) { setN(target); clearInterval(t); }
+      else setN(Math.floor(cur));
     }, 16);
-    return () => clearInterval(timer);
-  }, [inView, target]);
-
-  return (
-    <span>
-      {count}
-      {suffix}
-    </span>
-  );
+    return () => clearInterval(t);
+  }, [run, target]);
+  return <>{n}{suffix}</>;
 }
-
-const trustedBy = [
-  "Shopify", "Notion", "Webflow", "Stripe", "Vercel", "Figma", "Linear", "Resend"
-];
 
 export default function StatsSection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section className="relative py-24 overflow-hidden">
-      {/* Top separator gradient */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
-
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Trusted By */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <p className="text-sm text-white/30 tracking-widest uppercase mb-8">
-            Trusted by growing businesses worldwide
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-            {trustedBy.map((brand, i) => (
-              <motion.span
-                key={brand}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.07 }}
-                className="text-white/20 font-semibold text-lg hover:text-white/50 transition-colors cursor-default"
-              >
-                {brand}
-              </motion.span>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent mb-16" />
-
-        {/* Stats Grid */}
-        <div ref={ref} className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="text-center group"
+    <section className="relative border-t border-[rgba(235,206,181,0.06)]">
+      {/* Marquee */}
+      <div className="py-6 overflow-hidden border-b border-[rgba(235,206,181,0.06)]">
+        <div className="flex whitespace-nowrap animate-marquee gap-0 w-max">
+          {[...brands, ...brands].map((b, i) => (
+            <span
+              key={i}
+              className="inline-block px-8 text-[rgba(235,206,181,0.18)] text-sm font-medium tracking-widest uppercase"
             >
-              <div className="text-4xl md:text-5xl lg:text-6xl font-black gradient-text-purple mb-2 tabular-nums">
-                <CountUp target={stat.value} suffix={stat.suffix} inView={isInView} />
-              </div>
-              <div className="text-white font-semibold mb-1">{stat.label}</div>
-              <div className="text-sm text-white/40">{stat.description}</div>
-            </motion.div>
+              {b}
+            </span>
           ))}
         </div>
       </div>
 
-      {/* Bottom separator */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+      {/* Stats */}
+      <div ref={ref} className="max-w-6xl mx-auto px-6 py-24 grid grid-cols-2 md:grid-cols-4 gap-10">
+        {stats.map((s, i) => (
+          <motion.div
+            key={s.label}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: i * 0.1 }}
+            className="text-center"
+          >
+            <div className="text-[clamp(2.4rem,5vw,3.5rem)] font-black text-[#ebceb5] leading-none mb-2 tabular-nums">
+              <Counter target={s.value} suffix={s.suffix} run={inView} />
+            </div>
+            <div className="text-[rgba(235,206,181,0.4)] text-sm tracking-wide">{s.label}</div>
+          </motion.div>
+        ))}
+      </div>
     </section>
   );
 }

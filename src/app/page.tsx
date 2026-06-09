@@ -15,20 +15,22 @@ import PageTransition from "@/components/PageTransition";
 export default function Home() {
   return (
     <PageTransition>
-      <main className="relative bg-[#0A0A0A] min-h-screen overflow-x-hidden">
-        <Navbar />
-        <HeroSection />
-        <StatsSection />
-        <ServicesSection />
-        <ProjectsSection />
-        <WhyUsSection />
-        <ProcessSection />
-        <TestimonialsSection />
-        <FAQSection />
-        <CTASection />
-        <ContactSection />
-        <Footer />
-      </main>
+      <div className="grain">
+        <main className="relative bg-[#0e0c0a] min-h-screen overflow-x-hidden">
+          <Navbar />
+          <HeroSection />
+          <StatsSection />
+          <ServicesSection />
+          <ProjectsSection />
+          <WhyUsSection />
+          <ProcessSection />
+          <TestimonialsSection />
+          <FAQSection />
+          <CTASection />
+          <ContactSection />
+          <Footer />
+        </main>
+      </div>
     </PageTransition>
   );
 }
