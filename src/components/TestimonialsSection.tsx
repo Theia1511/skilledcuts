@@ -8,136 +8,148 @@ const testimonials = [
   {
     initials: "SC",
     name: "Sarah Chen",
-    role: "CEO, NexaCommerce",
-    text: "SkilledCuts rebuilt our entire online presence. Conversion rate up 340% in the first 3 months. The quality is unlike anything we've had from an agency.",
+    role: "CEO",
+    company: "NexaCommerce",
+    text: "SkilledCuts completely transformed our online presence. Our conversion rate jumped 340% in the first 3 months. The attention to detail and speed of delivery was unlike anything we've experienced from an agency.",
     rating: 5,
   },
   {
     initials: "MR",
     name: "Marcus Reid",
-    role: "Founder, Fintract",
-    text: "They delivered a FinTech dashboard beyond our imagination — stunning UI, flawless performance, seamless AI. We raised $2.1M shortly after launch.",
+    role: "Founder",
+    company: "Fintract",
+    text: "They delivered a FinTech dashboard beyond our imagination — stunning UI, flawless performance, seamless AI integrations. We raised $2.1M shortly after launch. Worth every penny.",
     rating: 5,
   },
   {
     initials: "PS",
     name: "Priya Sharma",
-    role: "Marketing Director, HealthBridge",
-    text: "Our landing page was underperforming badly. SkilledCuts rebuilt it with a sharp conversion strategy. Lead generation tripled. ROI in week one.",
+    role: "Marketing Director",
+    company: "HealthBridge",
+    text: "Our landing page was underperforming badly. SkilledCuts rebuilt it with a clear conversion strategy and our lead generation tripled. We saw ROI in the first week. That's the SkilledCuts difference.",
     rating: 5,
   },
   {
     initials: "JW",
     name: "James Whitfield",
-    role: "CTO, PropVault",
-    text: "Best agency we've ever worked with — period. Timelines hit, quality exceeded expectations. The automation they built saves us 20+ hours every week.",
+    role: "CTO",
+    company: "PropVault",
+    text: "Honestly the best agency we've ever worked with. Communication was transparent, timelines were hit, and the quality exceeded every expectation. The automation systems save us 20+ hours a week.",
     rating: 5,
   },
 ];
 
 export default function TestimonialsSection() {
-  const [idx, setIdx]   = useState(0);
-  const [dir, setDir]   = useState(1);
+  const [idx, setIdx] = useState(0);
+  const [dir, setDir] = useState(1);
 
   const next = useCallback(() => { setDir(1);  setIdx(i => (i + 1) % testimonials.length); }, []);
   const prev = useCallback(() => { setDir(-1); setIdx(i => (i - 1 + testimonials.length) % testimonials.length); }, []);
 
   useEffect(() => {
-    const t = setInterval(next, 5000);
+    const t = setInterval(next, 5500);
     return () => clearInterval(t);
   }, [next]);
 
   const t = testimonials[idx];
 
   return (
-    <section id="testimonials" className="py-28 border-t border-[rgba(235,206,181,0.06)] bg-[#131109]">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="testimonials" className="bg-white py-[120px]">
+      <div className="max-w-[1320px] mx-auto px-8">
+
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16"
+          className="max-w-[640px] mb-20"
         >
-          <p className="text-[10px] text-[rgba(235,206,181,0.35)] tracking-[0.22em] uppercase mb-4">Testimonials</p>
-          <h2 className="text-[clamp(2.4rem,5vw,4rem)] font-black text-[#ebceb5] leading-[0.95] tracking-tight">
-            What Clients Say
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#f7f0e8] border border-[#EBCEB5] rounded-full text-[12px] font-medium text-[#343690] mb-6">
+            Client Testimonials
+          </div>
+          <h2
+            className="font-black text-[#111118] leading-[1.05] tracking-tight"
+            style={{ fontSize: "clamp(2rem,4.5vw,3.25rem)" }}
+          >
+            What Our Clients<br />Say About Us
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 items-center">
-          {/* Avatar side */}
-          <AnimatePresence mode="wait">
+        {/* Testimonial card */}
+        <div className="max-w-[860px]">
+          <AnimatePresence mode="wait" custom={dir}>
             <motion.div
-              key={idx + "avatar"}
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.85 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col items-start gap-4"
+              key={idx}
+              custom={dir}
+              initial={{ opacity: 0, x: dir * 48 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: dir * -48 }}
+              transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+              className="p-10 md:p-14 rounded-2xl bg-[#fafafa] border border-[#f0f0f0]"
             >
-              <div className="w-20 h-20 rounded-2xl border border-[rgba(235,206,181,0.12)] bg-[rgba(235,206,181,0.04)] flex items-center justify-center text-[#ebceb5] font-black text-xl">
-                {t.initials}
-              </div>
-              <div>
-                <div className="text-[#ebceb5] font-semibold">{t.name}</div>
-                <div className="text-[rgba(235,206,181,0.4)] text-sm">{t.role}</div>
-              </div>
-              <div className="flex gap-1">
+              {/* Stars */}
+              <div className="flex gap-1 mb-8">
                 {Array.from({ length: t.rating }).map((_, i) => (
-                  <span key={i} className="text-[#ebceb5] text-xs opacity-70">★</span>
+                  <span key={i} className="text-[#EBCEB5] text-lg">★</span>
                 ))}
+              </div>
+
+              {/* Quote */}
+              <blockquote
+                className="text-[#111118] font-medium leading-[1.75] mb-10"
+                style={{ fontSize: "clamp(1.05rem,2vw,1.3rem)" }}
+              >
+                &ldquo;{t.text}&rdquo;
+              </blockquote>
+
+              {/* Author */}
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-[#343690] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                  {t.initials}
+                </div>
+                <div>
+                  <div className="text-[15px] font-semibold text-[#111118]">{t.name}</div>
+                  <div className="text-[13px] text-[#52525b]">{t.role}, {t.company}</div>
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Quote side */}
-          <div>
-            <AnimatePresence mode="wait" custom={dir}>
-              <motion.blockquote
-                key={idx}
-                custom={dir}
-                initial={{ opacity: 0, x: dir * 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: dir * -40 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[clamp(1.1rem,2.5vw,1.5rem)] text-[rgba(235,206,181,0.75)] font-light leading-relaxed mb-10"
-              >
-                &ldquo;{t.text}&rdquo;
-              </motion.blockquote>
-            </AnimatePresence>
-
-            <div className="flex items-center gap-6">
-              {/* Arrows */}
-              <div className="flex gap-3">
-                {[prev, next].map((fn, i) => (
-                  <motion.button
-                    key={i}
-                    whileHover={{ scale: 1.08 }}
-                    whileTap={{ scale: 0.92 }}
-                    onClick={fn}
-                    className="w-10 h-10 rounded-full border border-[rgba(235,206,181,0.12)] flex items-center justify-center text-[rgba(235,206,181,0.4)] hover:text-[#ebceb5] hover:border-[rgba(235,206,181,0.3)] transition-all"
-                    aria-label={i === 0 ? "Previous" : "Next"}
-                  >
-                    {i === 0 ? <ArrowLeft size={15} /> : <ArrowRight size={15} />}
-                  </motion.button>
-                ))}
-              </div>
-
-              {/* Progress dots */}
-              <div className="flex gap-2">
-                {testimonials.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => { setDir(i > idx ? 1 : -1); setIdx(i); }}
-                    className={`transition-all duration-300 rounded-full ${
-                      i === idx ? "w-6 h-1.5 bg-[#ebceb5]" : "w-1.5 h-1.5 bg-[rgba(235,206,181,0.2)]"
-                    }`}
-                    aria-label={`Go to ${i + 1}`}
-                  />
-                ))}
-              </div>
+          {/* Controls */}
+          <div className="flex items-center gap-6 mt-8">
+            <div className="flex gap-3">
+              {[{ fn: prev, label: "Previous" }, { fn: next, label: "Next" }].map(({ fn, label }, i) => (
+                <motion.button
+                  key={label}
+                  whileHover={{ scale: 1.06 }}
+                  whileTap={{ scale: 0.94 }}
+                  onClick={fn}
+                  aria-label={label}
+                  className="w-10 h-10 rounded-xl border border-[#e4e4e7] bg-white flex items-center justify-center text-[#52525b] hover:text-[#343690] hover:border-[#343690] transition-all duration-200"
+                >
+                  {i === 0 ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+                </motion.button>
+              ))}
             </div>
+
+            {/* Dots */}
+            <div className="flex gap-2 items-center">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setDir(i > idx ? 1 : -1); setIdx(i); }}
+                  aria-label={`Testimonial ${i + 1}`}
+                  className={`rounded-full transition-all duration-300 ${
+                    i === idx ? "w-6 h-2 bg-[#343690]" : "w-2 h-2 bg-[#e4e4e7] hover:bg-[#EBCEB5]"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <span className="ml-auto text-[13px] text-[#a1a1aa]">
+              {idx + 1} / {testimonials.length}
+            </span>
           </div>
         </div>
       </div>

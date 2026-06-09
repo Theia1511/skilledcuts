@@ -4,28 +4,35 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Send, CheckCircle2 } from "lucide-react";
+import { Send, CheckCircle2, Mail, Clock, Globe } from "lucide-react";
 import { useState } from "react";
 
 const schema = z.object({
   name:    z.string().min(2, "At least 2 characters"),
   email:   z.string().email("Valid email required"),
   company: z.string().optional(),
-  service: z.string().min(1, "Select a service"),
-  budget:  z.string().min(1, "Select a budget"),
-  message: z.string().min(20, "At least 20 characters"),
+  service: z.string().min(1, "Please select a service"),
+  budget:  z.string().min(1, "Please select a budget"),
+  message: z.string().min(20, "Please add more detail (min 20 chars)"),
 });
 type F = z.infer<typeof schema>;
 
-const services = ["Website Design","Landing Page","Web Development","UI/UX Design","AI Integration","Automation","Full Package"];
-const budgets  = ["$1,500 – $3,000","$3,000 – $7,500","$7,500 – $15,000","$15,000+","Not sure"];
+const services = ["Website Design", "Landing Page", "Web Development", "UI/UX Design", "AI Integration", "Automation", "Full Package"];
+const budgets  = ["$1,500 – $3,000", "$3,000 – $7,500", "$7,500 – $15,000", "$15,000+", "Not sure yet"];
 
-const inputClass =
-  "w-full px-4 py-3 bg-transparent border border-[rgba(235,206,181,0.1)] hover:border-[rgba(235,206,181,0.2)] focus:border-[rgba(235,206,181,0.4)] focus:outline-none rounded-xl text-[#ebceb5] text-sm placeholder-[rgba(235,206,181,0.2)] transition-colors";
+const inputBase =
+  "w-full px-4 py-3.5 bg-white border border-[#e4e4e7] hover:border-[#EBCEB5] focus:border-[#343690] focus:outline-none focus:ring-2 focus:ring-[#343690]/10 rounded-xl text-[#111118] text-[14px] placeholder-[#a1a1aa] transition-all duration-200";
+
+const contactInfo = [
+  { icon: Mail,  label: "Email",        value: "hello@skilledcuts.com" },
+  { icon: Clock, label: "Response",     value: "Within 24 hours"       },
+  { icon: Globe, label: "Working Hours",value: "Mon–Fri, 9AM–6PM EST"  },
+];
 
 export default function ContactSection() {
   const [done, setDone] = useState(false);
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<F>({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } =
+    useForm<F>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data: F) => {
     await new Promise(r => setTimeout(r, 1400));
@@ -35,105 +42,137 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-28 border-t border-[rgba(235,206,181,0.06)]">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-14 items-start">
+    <section id="contact" className="bg-white py-[120px]">
+      <div className="max-w-[1320px] mx-auto px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-16 xl:gap-24 items-start">
 
-          {/* Left info */}
+          {/* Left — info */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -28 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-[10px] text-[rgba(235,206,181,0.35)] tracking-[0.22em] uppercase mb-4">Get In Touch</p>
-            <h2 className="text-[clamp(2.4rem,5vw,4rem)] font-black text-[#ebceb5] leading-[0.95] tracking-tight mb-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#f7f0e8] border border-[#EBCEB5] rounded-full text-[12px] font-medium text-[#343690] mb-6">
+              Get In Touch
+            </div>
+            <h2
+              className="font-black text-[#111118] leading-[1.05] tracking-tight mb-5"
+              style={{ fontSize: "clamp(2rem,4.5vw,3.25rem)" }}
+            >
               Let&apos;s Start<br />Your Project
             </h2>
-            <p className="text-[rgba(235,206,181,0.4)] text-sm leading-relaxed mb-10">
-              Fill out the form and we&apos;ll respond within 24 hours with a tailored proposal.
+            <p className="text-[16px] text-[#52525b] leading-[1.7] mb-12">
+              Fill out the form and we&apos;ll respond within 24 hours with a tailored proposal and next steps.
             </p>
 
-            {[
-              { k: "Email",         v: "hello@skilledcuts.com" },
-              { k: "Response",      v: "Within 24 hours"       },
-              { k: "Working hours", v: "Mon–Fri, 9AM–6PM EST"  },
-            ].map(row => (
-              <div key={row.k} className="flex gap-6 mb-4">
-                <span className="text-[rgba(235,206,181,0.25)] text-xs w-28 flex-shrink-0 pt-0.5">{row.k}</span>
-                <span className="text-[rgba(235,206,181,0.6)] text-sm">{row.v}</span>
-              </div>
-            ))}
+            <div className="space-y-6">
+              {contactInfo.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-[#f7f0e8] flex items-center justify-center text-[#343690] flex-shrink-0">
+                    <Icon size={17} />
+                  </div>
+                  <div>
+                    <div className="text-[12px] text-[#a1a1aa] mb-0.5">{label}</div>
+                    <div className="text-[14px] font-medium text-[#111118]">{value}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
-          {/* Form */}
+          {/* Right — form */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 28 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
             {done ? (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center justify-center text-center py-20 px-8 rounded-2xl border border-[rgba(235,206,181,0.08)] bg-[#131109] min-h-[400px]"
+                className="flex flex-col items-center justify-center text-center py-24 px-8 rounded-2xl border border-[#f0f0f0] bg-[#fafafa] min-h-[480px]"
               >
-                <CheckCircle2 size={36} className="text-[#ebceb5] mb-4 opacity-70" />
-                <h3 className="text-xl font-bold text-[#ebceb5] mb-2">Message Sent</h3>
-                <p className="text-[rgba(235,206,181,0.4)] text-sm mb-6">We&apos;ll be in touch within 24 hours.</p>
-                <button onClick={() => setDone(false)} className="text-xs text-[rgba(235,206,181,0.35)] hover:text-[#ebceb5] transition-colors underline underline-offset-4">
-                  Send another
+                <div className="w-16 h-16 rounded-2xl bg-[#f7f0e8] flex items-center justify-center mb-6">
+                  <CheckCircle2 size={30} className="text-[#343690]" />
+                </div>
+                <h3 className="text-[22px] font-bold text-[#111118] mb-3">Message Sent!</h3>
+                <p className="text-[15px] text-[#52525b] mb-8 max-w-xs leading-relaxed">
+                  Thanks for reaching out. We&apos;ll be in touch within 24 hours.
+                </p>
+                <button
+                  onClick={() => setDone(false)}
+                  className="text-[13px] text-[#343690] font-medium hover:underline underline-offset-4"
+                >
+                  Send another message
                 </button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="p-8 md:p-10 rounded-2xl border border-[#f0f0f0] bg-[#fafafa] space-y-5"
+                noValidate
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <input {...register("name")} placeholder="Full Name *" className={inputClass} />
-                    {errors.name && <p className="mt-1 text-xs text-[rgba(235,206,181,0.5)]">{errors.name.message}</p>}
+                    <label className="block text-[12px] font-medium text-[#52525b] mb-2">Full Name *</label>
+                    <input {...register("name")} placeholder="John Smith" className={inputBase} />
+                    {errors.name && <p className="mt-1.5 text-[12px] text-red-500">{errors.name.message}</p>}
                   </div>
                   <div>
-                    <input {...register("email")} type="email" placeholder="Email *" className={inputClass} />
-                    {errors.email && <p className="mt-1 text-xs text-[rgba(235,206,181,0.5)]">{errors.email.message}</p>}
-                  </div>
-                </div>
-
-                <input {...register("company")} placeholder="Company (optional)" className={inputClass} />
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <select {...register("service")} className={inputClass + " bg-[#0e0c0a] appearance-none"}>
-                      <option value="">Service *</option>
-                      {services.map(s => <option key={s} value={s} className="bg-[#131109]">{s}</option>)}
-                    </select>
-                    {errors.service && <p className="mt-1 text-xs text-[rgba(235,206,181,0.5)]">{errors.service.message}</p>}
-                  </div>
-                  <div>
-                    <select {...register("budget")} className={inputClass + " bg-[#0e0c0a] appearance-none"}>
-                      <option value="">Budget *</option>
-                      {budgets.map(b => <option key={b} value={b} className="bg-[#131109]">{b}</option>)}
-                    </select>
-                    {errors.budget && <p className="mt-1 text-xs text-[rgba(235,206,181,0.5)]">{errors.budget.message}</p>}
+                    <label className="block text-[12px] font-medium text-[#52525b] mb-2">Email *</label>
+                    <input {...register("email")} type="email" placeholder="john@company.com" className={inputBase} />
+                    {errors.email && <p className="mt-1.5 text-[12px] text-red-500">{errors.email.message}</p>}
                   </div>
                 </div>
 
                 <div>
-                  <textarea {...register("message")} rows={4} placeholder="Project details *" className={inputClass + " resize-none"} />
-                  {errors.message && <p className="mt-1 text-xs text-[rgba(235,206,181,0.5)]">{errors.message.message}</p>}
+                  <label className="block text-[12px] font-medium text-[#52525b] mb-2">Company (optional)</label>
+                  <input {...register("company")} placeholder="Acme Inc." className={inputBase} />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-[12px] font-medium text-[#52525b] mb-2">Service *</label>
+                    <select {...register("service")} className={inputBase + " appearance-none bg-white"}>
+                      <option value="">Select a service</option>
+                      {services.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    {errors.service && <p className="mt-1.5 text-[12px] text-red-500">{errors.service.message}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-[#52525b] mb-2">Budget *</label>
+                    <select {...register("budget")} className={inputBase + " appearance-none bg-white"}>
+                      <option value="">Select a budget</option>
+                      {budgets.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                    {errors.budget && <p className="mt-1.5 text-[12px] text-red-500">{errors.budget.message}</p>}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[12px] font-medium text-[#52525b] mb-2">Project Details *</label>
+                  <textarea
+                    {...register("message")}
+                    rows={5}
+                    placeholder="Tell us about your project, goals, and any specific requirements..."
+                    className={inputBase + " resize-none"}
+                  />
+                  {errors.message && <p className="mt-1.5 text-[12px] text-red-500">{errors.message.message}</p>}
                 </div>
 
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.02, backgroundColor: "#272b72" }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full flex items-center justify-center gap-2 py-4 bg-[#ebceb5] hover:bg-[#e2c4a8] disabled:opacity-50 text-[#0e0c0a] font-semibold rounded-xl text-sm transition-colors"
+                  className="w-full flex items-center justify-center gap-2.5 py-4 bg-[#343690] hover:bg-[#272b72] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl text-[15px] transition-all duration-200 shadow-[0_4px_20px_rgba(52,54,144,0.25)]"
                 >
                   {isSubmitting ? (
-                    <div className="w-4 h-4 border-2 border-[#0e0c0a]/30 border-t-[#0e0c0a] rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
-                    <><Send size={14} /> Send Message</>
+                    <><Send size={16} /> Send Message</>
                   )}
                 </motion.button>
               </form>

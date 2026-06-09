@@ -4,13 +4,13 @@ import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 const stats = [
-  { value: 150, suffix: "+",  label: "Projects Delivered"    },
-  { value: 98,  suffix: "%",  label: "Client Satisfaction"   },
-  { value: 12,  suffix: "M+", label: "Revenue Generated"     },
-  { value: 5,   suffix: "+",  label: "Years of Experience"   },
+  { value: 150, suffix: "+",  label: "Projects Delivered",   desc: "Across 20+ industries"    },
+  { value: 98,  suffix: "%",  label: "Client Satisfaction",  desc: "Average rating 4.9 / 5"   },
+  { value: 12,  suffix: "M+", label: "Revenue Generated",    desc: "For our clients combined"  },
+  { value: 5,   suffix: "+",  label: "Years of Experience",  desc: "Building digital products" },
 ];
 
-const brands = ["Shopify","Notion","Webflow","Stripe","Vercel","Figma","Linear","Framer","Loom","Arc"];
+const brands = ["Shopify", "Notion", "Webflow", "Stripe", "Vercel", "Figma", "Linear", "Framer", "Loom", "Resend"];
 
 function Counter({ target, suffix, run }: { target: number; suffix: string; run: boolean }) {
   const [n, setN] = useState(0);
@@ -29,18 +29,18 @@ function Counter({ target, suffix, run }: { target: number; suffix: string; run:
 }
 
 export default function StatsSection() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref    = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section className="relative border-t border-[rgba(235,206,181,0.06)]">
-      {/* Marquee */}
-      <div className="py-6 overflow-hidden border-b border-[rgba(235,206,181,0.06)]">
-        <div className="flex whitespace-nowrap animate-marquee gap-0 w-max">
+    <section className="bg-white border-y border-[#f0f0f0]">
+      {/* Brand marquee */}
+      <div className="border-b border-[#f0f0f0] py-5 overflow-hidden bg-[#fafafa]">
+        <div className="flex whitespace-nowrap w-max animate-marquee">
           {[...brands, ...brands].map((b, i) => (
             <span
               key={i}
-              className="inline-block px-8 text-[rgba(235,206,181,0.18)] text-sm font-medium tracking-widest uppercase"
+              className="inline-block px-10 text-[#c4c4c8] text-sm font-medium tracking-[0.14em] uppercase"
             >
               {b}
             </span>
@@ -48,23 +48,29 @@ export default function StatsSection() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div ref={ref} className="max-w-6xl mx-auto px-6 py-24 grid grid-cols-2 md:grid-cols-4 gap-10">
-        {stats.map((s, i) => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: i * 0.1 }}
-            className="text-center"
-          >
-            <div className="text-[clamp(2.4rem,5vw,3.5rem)] font-black text-[#ebceb5] leading-none mb-2 tabular-nums">
-              <Counter target={s.value} suffix={s.suffix} run={inView} />
-            </div>
-            <div className="text-[rgba(235,206,181,0.4)] text-sm tracking-wide">{s.label}</div>
-          </motion.div>
-        ))}
+      {/* Stats grid */}
+      <div ref={ref} className="max-w-[1320px] mx-auto px-8 py-28">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          {stats.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: i * 0.1 }}
+              className="text-center"
+            >
+              <div
+                className="font-black text-[#343690] mb-3 tabular-nums leading-none"
+                style={{ fontSize: "clamp(2.5rem,5vw,3.75rem)" }}
+              >
+                <Counter target={s.value} suffix={s.suffix} run={inView} />
+              </div>
+              <div className="text-[15px] font-semibold text-[#111118] mb-1.5">{s.label}</div>
+              <div className="text-[13px] text-[#a1a1aa]">{s.desc}</div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
